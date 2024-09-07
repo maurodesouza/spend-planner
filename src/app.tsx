@@ -11,7 +11,7 @@ type Spent = {
 }
 
 export function App() {
-  const [spents, setSpents] = useState<Spent[]>([])
+  const [spending, setSpents] = useState<Spent[]>([])
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
   function onSumit(e: FormEvent<HTMLFormElement>) {
@@ -51,6 +51,18 @@ export function App() {
         <div>
           <CurrencyInput onChange={console.log} />
         </div>
+      </div>
+
+      <div>
+        {spending.map(spend => {
+          return (
+            <form className="flex items-center gap-2" onSubmit={onSumit}>
+              <Input type="color" defaultValue={spend.color} />
+              <Input defaultValue={spend.label} />
+              <CurrencyInput defaultValue={spend.amount} />
+            </form>
+          )
+        })}
       </div>
     </div>
   )
