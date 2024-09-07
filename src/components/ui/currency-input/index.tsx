@@ -4,7 +4,7 @@ import { Input } from "../input"
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
-    onChange: (value: string) => void
+    onChange?: (value: string) => void
   }
 
 function CurrencyInput({ type, onChange, ...props }: InputProps) {
@@ -33,7 +33,7 @@ function CurrencyInput({ type, onChange, ...props }: InputProps) {
     const value = formatOutput(e.target.value)
 
     setValue(value)
-    onChange(value)
+    onChange?.(value)
   }
 
   return (
