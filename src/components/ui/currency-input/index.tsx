@@ -7,8 +7,8 @@ export interface InputProps
     onChange?: (value: string) => void
   }
 
-function CurrencyInput({ type, onChange, ...props }: InputProps) {
-  const [value, setValue] = React.useState("0")
+function CurrencyInput({ type, onChange, defaultValue = "0", ...props }: InputProps) {
+  const [value, setValue] = React.useState(String(defaultValue))
 
   function formatInput(value: string) {
 
