@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useReducer, useState } from "react";
 
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
@@ -12,6 +12,7 @@ type Spent = {
 
 export function App() {
   const [spents, setSpents] = useState<Spent[]>([])
+  const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
   function onSumit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -21,7 +22,6 @@ export function App() {
 
     const color = fields[0].value
     const label = fields[1].value
-
     let amountString = fields[2].value
 
     amountString = amountString.replace(/\D/g, '');
@@ -34,12 +34,14 @@ export function App() {
     const payload = { color, label, amount }
 
     setSpents(cur => [...cur, payload])
+
+    increaseTick()
   }
 
   return (
     <div className="h-full p-4">
       <div className="flex items-center justify-between gap-4">
-        <form className="flex items-center gap-2" onSubmit={onSumit}>
+        <form key={tick} className="flex items-center gap-2" onSubmit={onSumit}>
           <Input type="color" />
           <Input />
           <CurrencyInput onChange={console.log} />
