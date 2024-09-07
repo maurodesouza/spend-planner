@@ -14,10 +14,7 @@ export function App() {
   const [spending, setSpents] = useState<Spent[]>([])
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
-  function onSumit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-
-    const form = e.target as HTMLFormElement
+  function getDataFromForm(form: HTMLFormElement): Spent {
     const fields = [...form] as HTMLInputElement[]
 
     const color = fields[0].value
@@ -31,7 +28,14 @@ export function App() {
 
     const amount = Number(amountString.replace(/(\d{2}$)/, '.$1'));
 
-    const payload = { color, label, amount }
+    return { color, label, amount }
+  }
+
+  function onSumit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    const form = e.target as HTMLFormElement
+    const payload = getDataFromForm(form)
 
     setSpents(cur => [...cur, payload])
 
