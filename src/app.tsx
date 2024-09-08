@@ -12,7 +12,7 @@ type Spent = {
 }
 
 export function App() {
-  const [spending, setSpents] = useState<Spent[]>([])
+  const [spending, setSpending] = useState<Spent[]>([])
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
   function getDataFromForm(form: HTMLFormElement): Spent {
@@ -41,7 +41,7 @@ export function App() {
     const id = window.crypto.randomUUID()
     const data = { id, ...payload  }
 
-    setSpents(cur => [...cur, data])
+    setSpending(cur => [...cur, data])
 
     increaseTick()
   }
@@ -53,7 +53,7 @@ export function App() {
       const form = e.target as HTMLFormElement
       const payload = getDataFromForm(form)
   
-      setSpents(cur => cur.map((record, index) => {
+      setSpending(cur => cur.map((record, index) => {
         if (index === recordIndex) {
           return {
             ...record,
@@ -68,7 +68,7 @@ export function App() {
 
   function deleteSpent(recordIndex: number) {
     return () => {
-      setSpents(cur => cur.filter((_, index) => index !== recordIndex))
+      setSpending(cur => cur.filter((_, index) => index !== recordIndex))
     }
   }
 
