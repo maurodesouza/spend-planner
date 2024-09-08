@@ -73,12 +73,12 @@ export function App() {
   }
 
   return (
-    <div className="h-full p-4">
+    <div className="h-full p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <form key={tick} className="flex items-center gap-2" onSubmit={onCreateSubmit}>
-          <Input type="color" />
-          <Input />
-          <CurrencyInput onChange={console.log} />
+          <Input type="color" className="size-10 flex-shrink-0"/>
+          <Input  className="w-full" />
+          <CurrencyInput onChange={console.log} className="max-w-32" />
 
           <Button type="submit">Add</Button>
         </form>
@@ -87,20 +87,25 @@ export function App() {
         </div>
       </div>
 
-      <div>
+      <ul className="flex flex-col gap-2 max-w-xl">
         {spending.map((spend, index) => {
           return (
-            <form key={spend.id} className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
-              <Input type="color" defaultValue={spend.color} />
-              <Input defaultValue={spend.label} />
-              <CurrencyInput defaultValue={spend.amount} />
+            <li key={spend.id} >
+              <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
+                <div className="flex items-center gap-2">
+                  <Input type="color" defaultValue={spend.color} className="size-10 flex-shrink-0" />
+                  <Input defaultValue={spend.label} className="w-full" />
+                  <CurrencyInput defaultValue={spend.amount} className="max-w-32" />
+                </div>
 
-              <Button type="submit">Edit</Button>
-              <Button variant="destructive" onClick={deleteSpent(index)}>Delete</Button>
-            </form>
+
+                <Button type="submit">Edit</Button>
+                <Button variant="destructive" onClick={deleteSpent(index)}>Delete</Button>
+              </form>
+            </li>
           )
         })}
-      </div>
+      </ul>
     </div>
   )
 }
