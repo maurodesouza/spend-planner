@@ -5,6 +5,7 @@ import { Button } from "./components/ui/button";
 import { CurrencyInput } from "./components/ui/currency-input";
 
 type Spent = {
+  id?: string
   color: string
   label: string
   amount: number
@@ -37,7 +38,10 @@ export function App() {
     const form = e.target as HTMLFormElement
     const payload = getDataFromForm(form)
 
-    setSpents(cur => [...cur, payload])
+    const id = window.crypto.randomUUID()
+    const data = { id, ...payload  }
+
+    setSpents(cur => [...cur, data])
 
     increaseTick()
   }
@@ -86,7 +90,7 @@ export function App() {
       <div>
         {spending.map((spend, index) => {
           return (
-            <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
+            <form key={spend.id} className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
               <Input type="color" defaultValue={spend.color} />
               <Input defaultValue={spend.label} />
               <CurrencyInput defaultValue={spend.amount} />
