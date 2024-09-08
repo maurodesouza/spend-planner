@@ -31,7 +31,7 @@ export function App() {
     return { color, label, amount }
   }
 
-  function onSumit(e: FormEvent<HTMLFormElement>) {
+  function onCreateSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
     const form = e.target as HTMLFormElement
@@ -42,10 +42,30 @@ export function App() {
     increaseTick()
   }
 
+  function onEditSubmit(recordIndex: number) {
+    return (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+  
+      const form = e.target as HTMLFormElement
+      const payload = getDataFromForm(form)
+  
+      setSpents(cur => cur.map((record, index) => {
+        if (index === recordIndex) {
+          return {
+            ...record,
+            ...payload
+          }
+        }
+
+        return record
+      }))
+    }
+  }
+
   return (
     <div className="h-full p-4">
       <div className="flex items-center justify-between gap-4">
-        <form key={tick} className="flex items-center gap-2" onSubmit={onSumit}>
+        <form key={tick} className="flex items-center gap-2" onSubmit={onCreateSubmit}>
           <Input type="color" />
           <Input />
           <CurrencyInput onChange={console.log} />
@@ -58,12 +78,14 @@ export function App() {
       </div>
 
       <div>
-        {spending.map(spend => {
+        {spending.map((spend, index) => {
           return (
-            <form className="flex items-center gap-2" onSubmit={onSumit}>
+            <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
               <Input type="color" defaultValue={spend.color} />
               <Input defaultValue={spend.label} />
               <CurrencyInput defaultValue={spend.amount} />
+
+              <Button type="submit">Edit</Button>
             </form>
           )
         })}
