@@ -78,12 +78,12 @@ export function App() {
         <form key={tick} className="flex items-center gap-2" onSubmit={onCreateSubmit}>
           <Input type="color" className="size-10 flex-shrink-0"/>
           <Input  className="w-full" />
-          <CurrencyInput onChange={console.log} className="max-w-32" />
+          <CurrencyInput className="max-w-32" />
 
           <Button type="submit">Add</Button>
         </form>
         <div>
-          <CurrencyInput onChange={console.log} />
+          <CurrencyInput />
         </div>
       </div>
 
