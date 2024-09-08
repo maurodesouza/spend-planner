@@ -62,6 +62,12 @@ export function App() {
     }
   }
 
+  function deleteSpent(recordIndex: number) {
+    return () => {
+      setSpents(cur => cur.filter((_, index) => index !== recordIndex))
+    }
+  }
+
   return (
     <div className="h-full p-4">
       <div className="flex items-center justify-between gap-4">
@@ -86,6 +92,7 @@ export function App() {
               <CurrencyInput defaultValue={spend.amount} />
 
               <Button type="submit">Edit</Button>
+              <Button variant="destructive" onClick={deleteSpent(index)}>Delete</Button>
             </form>
           )
         })}
