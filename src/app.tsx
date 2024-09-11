@@ -13,6 +13,7 @@ type Spent = {
 
 export function App() {
   const [spending, setSpending] = useState<Spent[]>([])
+  const [availableToSpent, setAvailableToSpent] = useState<number>(0)
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
   const totalSpending = spending.reduce((amount, spent) => amount + spent.amount, 0)
@@ -92,7 +93,7 @@ export function App() {
           <Button type="submit">Add</Button>
         </form>
         <div>
-          <CurrencyInput />
+          <CurrencyInput onChange={(v) => setAvailableToSpent(Number(v))} />
         </div>
       </div>
 
@@ -118,10 +119,16 @@ export function App() {
         </ul>
 
         <div>
-          <div>
-            <p>
-              <strong>Total Spending: </strong>
-              {formatToCurrency(totalSpending)}
+          <div className="flex gap-4">
+            <p className="flex items-center gap-4">
+              <strong className="text-nowrap">Total Spending: </strong>
+
+              <Input readOnly value={formatToCurrency(totalSpending)} />
+            </p>
+
+            <p className="flex items-center gap-4">
+              <strong className="text-nowrap">Available To Spent: </strong>
+              <Input readOnly value={formatToCurrency(availableToSpent)} />
             </p>
           </div>
         </div>
