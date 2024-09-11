@@ -17,6 +17,7 @@ export function App() {
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
   const totalSpending = spending.reduce((amount, spent) => amount + spent.amount, 0)
+  const rest = availableToSpent - totalSpending
 
   function getDataFromForm(form: HTMLFormElement): Spent {
     const fields = [...form] as HTMLInputElement[]
@@ -82,6 +83,9 @@ export function App() {
     }
   }
 
+  const isMissing = rest < 0
+  const label =  isMissing ? "Missing" : "Leftover"
+
   return (
     <div className="h-full p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
@@ -130,6 +134,13 @@ export function App() {
               <strong className="text-nowrap">Available To Spent: </strong>
               <Input readOnly value={formatToCurrency(availableToSpent)} />
             </p>
+
+            {availableToSpent > 0 && (
+              <p className="flex items-center gap-4">
+                <strong className="text-nowrap">{label}: </strong>
+                <Input readOnly value={formatToCurrency(Math.abs(rest))} />
+              </p>
+            )}
           </div>
         </div>
       </div>
