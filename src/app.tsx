@@ -83,8 +83,11 @@ export function App() {
     }
   }
 
-  const isMissing = rest < 0
+  const isAvailableDefined = availableToSpent > 0
+  const isMissing = isAvailableDefined && rest < 0
+  
   const label =  isMissing ? "Missing" : "Leftover"
+  const dangerClasses = isMissing ? "border-destructive focus-visible:ring-destructive" : ""
 
   return (
     <div className="h-full p-4 flex flex-col gap-4">
@@ -127,7 +130,7 @@ export function App() {
             <p className="flex items-center gap-4">
               <strong className="text-nowrap">Total Spending: </strong>
 
-              <Input readOnly value={formatToCurrency(totalSpending)} />
+              <Input readOnly value={formatToCurrency(totalSpending)} className={dangerClasses} />
             </p>
 
             <p className="flex items-center gap-4">
@@ -135,10 +138,10 @@ export function App() {
               <Input readOnly value={formatToCurrency(availableToSpent)} />
             </p>
 
-            {availableToSpent > 0 && (
+            {isAvailableDefined && (
               <p className="flex items-center gap-4">
                 <strong className="text-nowrap">{label}: </strong>
-                <Input readOnly value={formatToCurrency(Math.abs(rest))} />
+                <Input readOnly value={formatToCurrency(Math.abs(rest))} className={dangerClasses} />
               </p>
             )}
           </div>
