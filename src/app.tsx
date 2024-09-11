@@ -15,6 +15,8 @@ export function App() {
   const [spending, setSpending] = useState<Spent[]>([])
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
+  const totalSpending = spending.reduce((amount, spent) => amount + spent.amount, 0)
+
   function getDataFromForm(form: HTMLFormElement): Spent {
     const fields = [...form] as HTMLInputElement[]
 
@@ -66,6 +68,13 @@ export function App() {
     }
   }
 
+  function formatToCurrency(value: number) {
+    return Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(value)
+  }
+
   function deleteSpent(recordIndex: number) {
     return () => {
       setSpending(cur => cur.filter((_, index) => index !== recordIndex))
@@ -87,25 +96,36 @@ export function App() {
         </div>
       </div>
 
-      <ul className="flex flex-col gap-2 max-w-xl">
-        {spending.map((spend, index) => {
-          return (
-            <li key={spend.id} >
-              <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
-                <div className="flex items-center gap-2">
-                  <Input type="color" defaultValue={spend.color} className="size-10 flex-shrink-0" />
-                  <Input defaultValue={spend.label} className="w-full" />
-                  <CurrencyInput defaultValue={spend.amount} className="max-w-32" />
-                </div>
+      <div className="flex gap-4">
+        <ul className="flex flex-col gap-2 max-w-xl">
+          {spending.map((spend, index) => {
+            return (
+              <li key={spend.id} >
+                <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
+                  <div className="flex items-center gap-2">
+                    <Input type="color" defaultValue={spend.color} className="size-10 flex-shrink-0" />
+                    <Input defaultValue={spend.label} className="w-full" />
+                    <CurrencyInput defaultValue={spend.amount} className="max-w-32" />
+                  </div>
 
 
-                <Button type="submit">Edit</Button>
-                <Button variant="destructive" onClick={deleteSpent(index)}>Delete</Button>
-              </form>
-            </li>
-          )
-        })}
-      </ul>
+                  <Button type="submit">Edit</Button>
+                  <Button variant="destructive" onClick={deleteSpent(index)}>Delete</Button>
+                </form>
+              </li>
+            )
+          })}
+        </ul>
+
+        <div>
+          <div>
+            <p>
+              <strong>Total Spending: </strong>
+              {formatToCurrency(totalSpending)}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
