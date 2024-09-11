@@ -85,7 +85,7 @@ export function App() {
 
   const isAvailableDefined = availableToSpent > 0
   const isMissing = isAvailableDefined && rest < 0
-  
+
   const label =  isMissing ? "Missing" : "Leftover"
   const dangerClasses = isMissing ? "border-destructive focus-visible:ring-destructive" : ""
 
@@ -104,8 +104,8 @@ export function App() {
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <ul className="flex flex-col gap-2 max-w-xl">
+      <div className="flex gap-4 w-full">
+        <ul className="flex flex-col gap-2 max-w-xl flex-shrink-0 basis-[576px]">
           {spending.map((spend, index) => {
             return (
               <li key={spend.id} >
@@ -125,8 +125,8 @@ export function App() {
           })}
         </ul>
 
-        <div>
-          <div className="flex gap-4">
+        <div className="flex-1">
+          <div className="w-full flex gap-4 justify-between">
             <p className="flex items-center gap-4">
               <strong className="text-nowrap">Total Spending: </strong>
 
