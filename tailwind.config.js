@@ -46,6 +46,9 @@ export default {
         DEFAULT: "var(--radius)",
         sm: "calc(var(--radius) - 0.25rem)",
       },
+      borderWidth: {
+        DEFAULT: "var(--border-width)",
+      }
     },
   },
   plugins: [],
