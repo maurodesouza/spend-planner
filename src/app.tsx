@@ -19,6 +19,8 @@ export function App() {
   const totalSpending = spending.reduce((amount, spent) => amount + spent.amount, 0)
   const rest = availableToSpent - totalSpending
 
+  const totalAmount = availableToSpent > totalSpending ? availableToSpent : totalSpending
+
   function getDataFromForm(form: HTMLFormElement): Spent {
     const fields = [...form] as HTMLInputElement[]
 
@@ -107,6 +109,8 @@ export function App() {
       <div className="flex gap-4 w-full">
         <ul className="flex flex-col gap-2 max-w-xl flex-shrink-0 basis-[576px]">
           {spending.map((spend, index) => {
+            const percentage = Number((spend.amount * 100 / totalAmount).toFixed(1))
+
             return (
               <li key={spend.id} >
                 <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
@@ -114,6 +118,9 @@ export function App() {
                     <Input type="color" defaultValue={spend.color} className="size-10 flex-shrink-0" />
                     <Input defaultValue={spend.label} className="w-full" />
                     <CurrencyInput defaultValue={spend.amount} className="max-w-32" />
+
+                    <Input type="number" min="0" max="100" step="0.1" value={percentage} readOnly  className="w-full"  />
+                    %
                   </div>
 
 
