@@ -8,7 +8,11 @@ export interface InputProps
   }
 
 function CurrencyInput({ type, onChange, defaultValue = "0", ...props }: InputProps) {
-  const [value, setValue] = React.useState(String(defaultValue))
+  const [value, setValue] = React.useState(() => {
+    const valueStr = String(defaultValue)
+
+    return valueStr.match(/\.|,/) ? valueStr : `${valueStr}.00`
+  })
 
   function formatInput(value: string) {
 
