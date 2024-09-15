@@ -226,6 +226,21 @@ export function App() {
                   dataKey="amount"
                   nameKey="id"
                   innerRadius={90}
+                  labelLine={false}
+                  label={(props) => {
+                    return (
+                      <text 
+                        cx={props.cx}
+                        cy={props.cy}
+                        x={props.x}
+                        y={props.y}
+                        textAnchor={props.textAnchor}
+                        dominantBaseline={props.dominantBaseline}
+                      >
+                        {`${(props.percent * 100).toFixed(0)}%`}
+                      </text>
+                    );
+                  }}
                 />
 
               <Chart.Legend
