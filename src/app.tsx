@@ -201,7 +201,25 @@ export function App() {
               <PieChart>
                 <Chart.Tooltip
                   cursor={false}
-                  content={<Chart.TooltipContent hideLabel />}
+                  content={(
+                    <Chart.TooltipContent
+                      formatter={(value, _, item) => {
+                        const formattedValue = Number(`${value}`).toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })
+
+                        return (
+                          <div className="flex gap-2 items-center">
+                            <div style={{ background: item.payload.color }} className="size-3 rounded-sm" />
+                            <strong>{item.payload.label}</strong>
+                            <p>{formattedValue}</p>
+                          </div>
+                        )
+                      }}
+                      hideLabel
+                    />
+                  )}
                 />
                 <Pie
                   data={chartData}
