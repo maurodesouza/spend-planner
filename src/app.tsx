@@ -1,14 +1,17 @@
 import { FormEvent, useReducer, useState } from "react";
+import { Pie, PieChart } from "recharts";
 
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { CurrencyInput } from "./components/ui/currency-input";
+import { Chart, ChartConfig } from "./components/ui/chart";
 
 type Spent = {
   id?: string
   color: string
   label: string
   amount: number
+  fill?: string
 }
 
 export function App() {
@@ -45,7 +48,7 @@ export function App() {
     const payload = getDataFromForm(form)
 
     const id = window.crypto.randomUUID()
-    const data = { id, ...payload  }
+    const data = { id, fill: `var(--color-${id})`,...payload  }
 
     setSpending(cur => [...cur, data])
 
@@ -85,11 +88,47 @@ export function App() {
     }
   }
 
+  function getChartData() {
+    if (isMissing) return spending
+
+    const data = [...spending]
+
+    data.push({
+      amount: rest,
+      color: "#eeeeee",
+      label: "Leftover",
+      id: "leftover",
+      fill: `var(--color-leftover)`
+    })
+
+    return data
+  }
+
   const isAvailableDefined = availableToSpent > 0
   const isMissing = isAvailableDefined && rest < 0
 
   const label =  isMissing ? "Missing" : "Leftover"
   const dangerClasses = isMissing ? "border-destructive focus-visible:ring-destructive" : ""
+
+
+  const chartConfig = spending.reduce((obj, spent) => {
+    obj[spent.id!] = {
+      label: spent.label,
+      color: spent.color
+    }
+
+    return obj
+  }, {
+    amount: {
+      label: "Value"
+    },
+    leftover: {
+      label: "Leftover",
+      color: "#eee"
+    }
+  } as ChartConfig)
+
+  const chartData = getChartData()
 
   return (
     <div className="h-full p-4 flex flex-col gap-4">
@@ -151,6 +190,65 @@ export function App() {
                 <Input readOnly value={formatToCurrency(Math.abs(rest))} className={dangerClasses} />
               </p>
             )}
+          </div>
+
+
+          <div>
+              <Chart.Container
+                config={chartConfig as ChartConfig}
+                className="mx-auto aspect-square w-full max-w-lg"
+              >
+              <PieChart>
+                <Chart.Tooltip
+                  cursor={false}
+                  content={(
+                    <Chart.TooltipContent
+                      formatter={(value, _, item) => {
+                        const formattedValue = Number(`${value}`).toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })
+
+                        return (
+                          <div className="flex gap-2 items-center">
+                            <div style={{ background: item.payload.color }} className="size-3 rounded-sm" />
+                            <strong>{item.payload.label}</strong>
+                            <p>{formattedValue}</p>
+                          </div>
+                        )
+                      }}
+                      hideLabel
+                    />
+                  )}
+                />
+                <Pie
+                  data={chartData}
+                  dataKey="amount"
+                  nameKey="id"
+                  innerRadius={90}
+                  labelLine={false}
+                  label={(props) => {
+                    return (
+                      <text 
+                        cx={props.cx}
+                        cy={props.cy}
+                        x={props.x}
+                        y={props.y}
+                        textAnchor={props.textAnchor}
+                        dominantBaseline={props.dominantBaseline}
+                      >
+                        {`${(props.percent * 100).toFixed(0)}%`}
+                      </text>
+                    );
+                  }}
+                />
+
+              <Chart.Legend
+                content={<Chart.LegendContent nameKey="id"  />}
+                className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+              />
+              </PieChart>
+            </Chart.Container>
           </div>
         </div>
       </div>
