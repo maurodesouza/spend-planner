@@ -209,6 +209,11 @@ export function App() {
                   nameKey="id"
                   innerRadius={90}
                 />
+
+              <Chart.Legend
+                content={<Chart.LegendContent nameKey="id"  />}
+                className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+              />
               </PieChart>
             </Chart.Container>
           </div>
