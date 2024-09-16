@@ -3,8 +3,42 @@ import { Pie, PieChart } from "recharts";
 
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
-import { CurrencyInput } from "./components/ui/currency-input";
 import { Chart, ChartConfig } from "./components/ui/chart";
+import { PaletteInput } from "./components/ui/palette-input";
+import { CurrencyInput } from "./components/ui/currency-input";
+
+const COLOR_OPTIONS = [
+  "#ffdab9",
+  "#b0e57c",
+  "#9fe2bf",
+  "#87ceeb",
+  "#dda0dd",
+  "#ffb6c1",
+  "#ffcccb",
+  "#f0e68c",
+  "#add8e6",
+  "#ffebcd",
+  "#ff7f50",
+  "#98fb98",
+  "#afeeee",
+  "#db7093",
+  "#f4a460",
+  "#fafad2",
+  "#d8bfd8",
+  "#e0ffff",
+  "#ffe4e1",
+  "#ffdead",
+  "#e6e6fa",
+  "#d3ffce",
+  "#ffefd5",
+  "#ffc0cb",
+  "#f5deb3",
+  "#bc8f8f",
+  "#f0fff0",
+  "#c3b091",
+  "#eedd82",
+  "#ffb347"
+]
 
 type Spent = {
   id?: string
@@ -27,9 +61,9 @@ export function App() {
   function getDataFromForm(form: HTMLFormElement): Spent {
     const fields = [...form] as HTMLInputElement[]
 
-    const color = fields[0].value
-    const label = fields[1].value
-    let amountString = fields[2].value
+    const color = fields[1].value
+    const label = fields[2].value
+    let amountString = fields[3].value
 
     amountString = amountString.replace(/\D/g, '');
 
@@ -95,13 +129,22 @@ export function App() {
 
     data.push({
       amount: rest,
-      color: "#eeeeee",
+      color: "#c0c0c0",
       label: "Leftover",
       id: "leftover",
       fill: `var(--color-leftover)`
     })
 
     return data
+  }
+
+  function getDefaultPalette() {
+    const min = 0
+    const max = COLOR_OPTIONS.length
+
+    const index = Math.floor(Math.random() * (max - min + 1) + min);
+
+    return COLOR_OPTIONS[index]
   }
 
   const isAvailableDefined = availableToSpent > 0
@@ -124,7 +167,7 @@ export function App() {
     },
     leftover: {
       label: "Leftover",
-      color: "#eee"
+      color: "#c0c0c0"
     }
   } as ChartConfig)
 
@@ -134,7 +177,8 @@ export function App() {
     <div className="h-full p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <form key={tick} className="flex items-center gap-2" onSubmit={onCreateSubmit}>
-          <Input type="color" className="size-10 flex-shrink-0"/>
+          <PaletteInput options={COLOR_OPTIONS} defaultValue={getDefaultPalette()} />
+          
           <Input  className="w-full" />
           <CurrencyInput className="max-w-32" />
 
@@ -154,7 +198,7 @@ export function App() {
               <li key={spend.id} >
                 <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
                   <div className="flex items-center gap-2">
-                    <Input type="color" defaultValue={spend.color} className="size-10 flex-shrink-0" />
+                    <PaletteInput options={COLOR_OPTIONS} defaultValue={spend.color} />
                     <Input defaultValue={spend.label} className="w-full" />
                     <CurrencyInput defaultValue={spend.amount} className="max-w-32" />
 
