@@ -129,7 +129,7 @@ export function App() {
 
     data.push({
       amount: rest,
-      color: "#eeeeee",
+      color: "#c0c0c0",
       label: "Leftover",
       id: "leftover",
       fill: `var(--color-leftover)`
@@ -158,7 +158,7 @@ export function App() {
     },
     leftover: {
       label: "Leftover",
-      color: "#eee"
+      color: "#c0c0c0"
     }
   } as ChartConfig)
 
