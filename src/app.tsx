@@ -138,6 +138,15 @@ export function App() {
     return data
   }
 
+  function getDefaultPalette() {
+    const min = 0
+    const max = COLOR_OPTIONS.length
+
+    const index = Math.floor(Math.random() * (max - min + 1) + min);
+
+    return COLOR_OPTIONS[index]
+  }
+
   const isAvailableDefined = availableToSpent > 0
   const isMissing = isAvailableDefined && rest < 0
 
@@ -168,7 +177,7 @@ export function App() {
     <div className="h-full p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <form key={tick} className="flex items-center gap-2" onSubmit={onCreateSubmit}>
-          <PaletteInput options={COLOR_OPTIONS} />
+          <PaletteInput options={COLOR_OPTIONS} defaultValue={getDefaultPalette()} />
           
           <Input  className="w-full" />
           <CurrencyInput className="max-w-32" />
