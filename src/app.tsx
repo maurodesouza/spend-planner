@@ -236,64 +236,65 @@ export function App() {
             )}
           </div>
 
+          {!!spending.length && (
+            <div>
+                <Chart.Container
+                  config={chartConfig as ChartConfig}
+                  className="mx-auto aspect-square w-full max-w-lg"
+                >
+                <PieChart>
+                  <Chart.Tooltip
+                    cursor={false}
+                    content={(
+                      <Chart.TooltipContent
+                        formatter={(value, _, item) => {
+                          const formattedValue = Number(`${value}`).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })
 
-          <div>
-              <Chart.Container
-                config={chartConfig as ChartConfig}
-                className="mx-auto aspect-square w-full max-w-lg"
-              >
-              <PieChart>
-                <Chart.Tooltip
-                  cursor={false}
-                  content={(
-                    <Chart.TooltipContent
-                      formatter={(value, _, item) => {
-                        const formattedValue = Number(`${value}`).toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })
+                          return (
+                            <div className="flex gap-2 items-center">
+                              <div style={{ background: item.payload.color }} className="size-3 rounded-sm" />
+                              <strong>{item.payload.label}</strong>
+                              <p>{formattedValue}</p>
+                            </div>
+                          )
+                        }}
+                        hideLabel
+                      />
+                    )}
+                  />
+                  <Pie
+                    data={chartData}
+                    dataKey="amount"
+                    nameKey="id"
+                    innerRadius={90}
+                    labelLine={false}
+                    label={(props) => {
+                      return (
+                        <text 
+                          cx={props.cx}
+                          cy={props.cy}
+                          x={props.x}
+                          y={props.y}
+                          textAnchor={props.textAnchor}
+                          dominantBaseline={props.dominantBaseline}
+                        >
+                          {`${(props.percent * 100).toFixed(0)}%`}
+                        </text>
+                      );
+                    }}
+                  />
 
-                        return (
-                          <div className="flex gap-2 items-center">
-                            <div style={{ background: item.payload.color }} className="size-3 rounded-sm" />
-                            <strong>{item.payload.label}</strong>
-                            <p>{formattedValue}</p>
-                          </div>
-                        )
-                      }}
-                      hideLabel
-                    />
-                  )}
+                <Chart.Legend
+                  content={<Chart.LegendContent nameKey="id"  />}
+                  className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
                 />
-                <Pie
-                  data={chartData}
-                  dataKey="amount"
-                  nameKey="id"
-                  innerRadius={90}
-                  labelLine={false}
-                  label={(props) => {
-                    return (
-                      <text 
-                        cx={props.cx}
-                        cy={props.cy}
-                        x={props.x}
-                        y={props.y}
-                        textAnchor={props.textAnchor}
-                        dominantBaseline={props.dominantBaseline}
-                      >
-                        {`${(props.percent * 100).toFixed(0)}%`}
-                      </text>
-                    );
-                  }}
-                />
-
-              <Chart.Legend
-                content={<Chart.LegendContent nameKey="id"  />}
-                className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-              />
-              </PieChart>
-            </Chart.Container>
-          </div>
+                </PieChart>
+              </Chart.Container>
+            </div>
+          )}
         </div>
       </div>
     </div>
