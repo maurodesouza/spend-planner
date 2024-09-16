@@ -123,7 +123,7 @@ export function App() {
   }
 
   function getChartData() {
-    if (isMissing) return spending
+    if (!isAvailableDefined || isMissing) return spending
 
     const data = [...spending]
 
