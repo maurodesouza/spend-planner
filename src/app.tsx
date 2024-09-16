@@ -61,9 +61,9 @@ export function App() {
   function getDataFromForm(form: HTMLFormElement): Spent {
     const fields = [...form] as HTMLInputElement[]
 
-    const color = fields[0].value
-    const label = fields[1].value
-    let amountString = fields[2].value
+    const color = fields[1].value
+    const label = fields[2].value
+    let amountString = fields[3].value
 
     amountString = amountString.replace(/\D/g, '');
 
