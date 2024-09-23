@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html,body, #root {
+  height: 100%;
+}
+
 :root  {
     --background: 145 0% 100%;
     --foreground: 145 0% 10%;
