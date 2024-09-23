@@ -1,4 +1,4 @@
-import { FormEvent, Reducer, useReducer } from "react";
+import { FormEvent, useReducer } from "react";
 import { Pie, PieChart } from "recharts";
 
 import { Input } from "./components/ui/input";
@@ -6,6 +6,7 @@ import { Button } from "./components/ui/button";
 import { Chart, ChartConfig } from "./components/ui/chart";
 import { PaletteInput } from "./components/ui/palette-input";
 import { CurrencyInput } from "./components/ui/currency-input";
+import { useStorageReducer } from "./hooks/use-storage-reducer";
 
 const COLOR_OPTIONS = [
   "#ffdab9",
@@ -72,7 +73,7 @@ const INITIAL_STATE = {
 } satisfies Data
 
 export function App() {
-  const [data, dispatch] = useReducer<Reducer<Data, Action>>((state, action) => {
+  const [data, dispatch] = useStorageReducer<Data, Action>((state, action) => {
     switch (action.type) {
       case Actions.SET_SPENDING: {
         return {
@@ -122,8 +123,9 @@ export function App() {
         return state
       }
     }
-  }, INITIAL_STATE)
-
+  }, INITIAL_STATE, {
+    storageKey: "data"
+  })
 
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
