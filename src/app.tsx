@@ -255,23 +255,9 @@ export function App() {
   const chartData = getChartData()
 
   return (
-    <div className="h-full p-4 flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-4">
-        <form key={tick} className="flex items-center gap-2" onSubmit={onCreateSubmit}>
-          <PaletteInput options={COLOR_OPTIONS} defaultValue={getDefaultPalette()} />
-          
-          <Input  className="w-full" />
-          <CurrencyInput className="max-w-32" />
-
-          <Button type="submit">Add</Button>
-        </form>
-        <div>
-          <CurrencyInput onChange={(v) => dispatch({ type: Actions.UPDATE_AVAILABLE_TO_SPENT, payload: Number(v) })} />
-        </div>
-      </div>
-
-      <div className="flex gap-4 w-full">
-        <ul className="flex flex-col gap-2 max-w-xl flex-shrink-0 basis-[576px]">
+    <div className="h-full p-4 flex gap-4">
+      <div className="flex flex-col h-full justify-between border border-border rounded p-4 bg-card max-w-xl flex-shrink-0 basis-[576px]">
+        <ul className="flex flex-col gap-2">
           {spending.map((spend) => {
             const percentage = Number((spend.amount * 100 / totalAmount).toFixed(1))
 
@@ -296,87 +282,96 @@ export function App() {
           })}
         </ul>
 
-        <div className="flex-1">
-          <div className="w-full flex gap-4 justify-between">
+        <form key={tick} className="flex items-center gap-2 w-full" onSubmit={onCreateSubmit}>
+          <PaletteInput options={COLOR_OPTIONS} defaultValue={getDefaultPalette()} />
+          
+          <Input  className="w-full" />
+          <CurrencyInput className="max-w-32" />
+
+          <Button type="submit">Add</Button>
+        </form>
+      </div>
+
+      <div className="flex-1 border border-border p-4 rounded flex flex-col justify-between">
+        <div className="w-full flex flex-wrap gap-4 justify-between">
+          <p className="flex items-center gap-4">
+            <strong className="text-nowrap">Total Spending: </strong>
+
+            <Input readOnly value={formatToCurrency(totalSpending)} className={dangerClasses} />
+          </p>
+
+          <p className="flex items-center gap-4">
+            <strong className="text-nowrap">Available To Spent: </strong>
+            <CurrencyInput onChange={(v) => dispatch({ type: Actions.UPDATE_AVAILABLE_TO_SPENT, payload: Number(v) })} />
+          </p>
+
+          {isAvailableDefined && (
             <p className="flex items-center gap-4">
-              <strong className="text-nowrap">Total Spending: </strong>
-
-              <Input readOnly value={formatToCurrency(totalSpending)} className={dangerClasses} />
+              <strong className="text-nowrap">{label}: </strong>
+              <Input readOnly value={formatToCurrency(Math.abs(rest))} className={dangerClasses} />
             </p>
-
-            <p className="flex items-center gap-4">
-              <strong className="text-nowrap">Available To Spent: </strong>
-              <Input readOnly value={formatToCurrency(availableToSpent)} />
-            </p>
-
-            {isAvailableDefined && (
-              <p className="flex items-center gap-4">
-                <strong className="text-nowrap">{label}: </strong>
-                <Input readOnly value={formatToCurrency(Math.abs(rest))} className={dangerClasses} />
-              </p>
-            )}
-          </div>
-
-          {!!spending.length && (
-            <div>
-                <Chart.Container
-                  config={chartConfig as ChartConfig}
-                  className="mx-auto aspect-square w-full max-w-lg"
-                >
-                <PieChart>
-                  <Chart.Tooltip
-                    cursor={false}
-                    content={(
-                      <Chart.TooltipContent
-                        formatter={(value, _, item) => {
-                          const formattedValue = Number(`${value}`).toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                          })
-
-                          return (
-                            <div className="flex gap-2 items-center">
-                              <div style={{ background: item.payload.color }} className="size-3 rounded-sm" />
-                              <strong>{item.payload.label}</strong>
-                              <p>{formattedValue}</p>
-                            </div>
-                          )
-                        }}
-                        hideLabel
-                      />
-                    )}
-                  />
-                  <Pie
-                    data={chartData}
-                    dataKey="amount"
-                    nameKey="id"
-                    innerRadius={90}
-                    labelLine={false}
-                    label={(props) => {
-                      return (
-                        <text 
-                          cx={props.cx}
-                          cy={props.cy}
-                          x={props.x}
-                          y={props.y}
-                          textAnchor={props.textAnchor}
-                          dominantBaseline={props.dominantBaseline}
-                        >
-                          {`${(props.percent * 100).toFixed(0)}%`}
-                        </text>
-                      );
-                    }}
-                  />
-
-                <Chart.Legend
-                  content={<Chart.LegendContent nameKey="id"  />}
-                  className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-                />
-                </PieChart>
-              </Chart.Container>
-            </div>
           )}
         </div>
+
+        {!!spending.length && (
+          <div>
+              <Chart.Container
+                config={chartConfig as ChartConfig}
+                className="mx-auto aspect-square w-[clamp(320px,100%,720px)]"
+              >
+              <PieChart>
+                <Chart.Tooltip
+                  cursor={false}
+                  content={(
+                    <Chart.TooltipContent
+                      formatter={(value, _, item) => {
+                        const formattedValue = Number(`${value}`).toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })
+
+                        return (
+                          <div className="flex gap-2 items-center">
+                            <div style={{ background: item.payload.color }} className="size-3 rounded-sm" />
+                            <strong>{item.payload.label}</strong>
+                            <p>{formattedValue}</p>
+                          </div>
+                        )
+                      }}
+                      hideLabel
+                    />
+                  )}
+                />
+                <Pie
+                  data={chartData}
+                  dataKey="amount"
+                  nameKey="id"
+                  innerRadius="40%"
+                  labelLine={false}
+                  label={(props) => {
+                    return (
+                      <text 
+                        cx={props.cx}
+                        cy={props.cy}
+                        x={props.x}
+                        y={props.y}
+                        textAnchor={props.textAnchor}
+                        dominantBaseline={props.dominantBaseline}
+                      >
+                        {`${(props.percent * 100).toFixed(0)}%`}
+                      </text>
+                    );
+                  }}
+                />
+
+              <Chart.Legend
+                content={<Chart.LegendContent nameKey="id"  />}
+                className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+              />
+              </PieChart>
+            </Chart.Container>
+          </div>
+        )}
       </div>
     </div>
   )
