@@ -1,4 +1,4 @@
-import { FormEvent, useReducer, useState } from "react";
+import { FormEvent, useReducer } from "react";
 import { Pie, PieChart } from "recharts";
 
 import { Input } from "./components/ui/input";
@@ -6,6 +6,7 @@ import { Button } from "./components/ui/button";
 import { Chart, ChartConfig } from "./components/ui/chart";
 import { PaletteInput } from "./components/ui/palette-input";
 import { CurrencyInput } from "./components/ui/currency-input";
+import { useStorageReducer } from "./hooks/use-storage-reducer";
 
 const COLOR_OPTIONS = [
   "#ffdab9",
@@ -48,10 +49,87 @@ type Spent = {
   fill?: string
 }
 
+enum Actions {
+  SET_SPENDING = "set-spending",
+  ADD_SPENDING = "add-spending",
+  REMOVE_SPENDING = "remove-spending",
+  UPDATE_SPENDING = "update-spending",
+  UPDATE_AVAILABLE_TO_SPENT = "update-available-to-spent",
+} 
+
+type Data = {
+  availableToSpent: number
+  spending: Spent[]
+}
+
+type Action = {
+  type: Actions,
+  payload: any
+}
+
+const INITIAL_STATE = {
+  availableToSpent: 0,
+  spending: []
+} satisfies Data
+
 export function App() {
-  const [spending, setSpending] = useState<Spent[]>([])
-  const [availableToSpent, setAvailableToSpent] = useState<number>(0)
+  const [data, dispatch] = useStorageReducer<Data, Action>((state, action) => {
+    switch (action.type) {
+      case Actions.SET_SPENDING: {
+        return {
+          ...state,
+          spending: action.payload
+        }
+      }
+
+      case Actions.ADD_SPENDING: {
+        return {
+          ...state,
+          spending: [...state.spending, action.payload]
+        }
+      }
+
+      case Actions.REMOVE_SPENDING: {
+        return {
+          ...state,
+          spending: state.spending.filter(record => record.id !== action.payload)
+        }
+      }
+
+      case Actions.UPDATE_SPENDING: {
+        return {
+          ...state,
+          spending: state.spending.map((record) => {
+            if (record.id === action.payload.id) {
+              return {
+                ...record,
+                ...action.payload.data
+              }
+            }
+    
+            return record
+          })
+        }
+      }
+
+      case Actions.UPDATE_AVAILABLE_TO_SPENT: {
+        return {
+          ...state,
+          availableToSpent: action.payload
+        }
+      }
+
+      default: {
+        return state
+      }
+    }
+  }, INITIAL_STATE, {
+    storageKey: "data"
+  })
+
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
+
+  const { availableToSpent, spending } = data
 
   const totalSpending = spending.reduce((amount, spent) => amount + spent.amount, 0)
   const rest = availableToSpent - totalSpending
@@ -84,28 +162,28 @@ export function App() {
     const id = window.crypto.randomUUID()
     const data = { id, fill: `var(--color-${id})`,...payload  }
 
-    setSpending(cur => [...cur, data])
+    dispatch({
+      type: Actions.ADD_SPENDING,
+      payload: data
+    })
 
     increaseTick()
   }
 
-  function onEditSubmit(recordIndex: number) {
+  function onEditSubmit(id: string) {
     return (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault()
   
       const form = e.target as HTMLFormElement
       const payload = getDataFromForm(form)
-  
-      setSpending(cur => cur.map((record, index) => {
-        if (index === recordIndex) {
-          return {
-            ...record,
-            ...payload
-          }
-        }
 
-        return record
-      }))
+      dispatch({
+        type: Actions.UPDATE_SPENDING,
+        payload: {
+          id,
+          data: payload
+        }
+      })
     }
   }
 
@@ -116,9 +194,12 @@ export function App() {
     }).format(value)
   }
 
-  function deleteSpent(recordIndex: number) {
+  function deleteSpent(id: string) {
     return () => {
-      setSpending(cur => cur.filter((_, index) => index !== recordIndex))
+      dispatch({
+        type: Actions.REMOVE_SPENDING,
+        payload: id
+      })
     }
   }
 
@@ -185,18 +266,18 @@ export function App() {
           <Button type="submit">Add</Button>
         </form>
         <div>
-          <CurrencyInput onChange={(v) => setAvailableToSpent(Number(v))} />
+          <CurrencyInput onChange={(v) => dispatch({ type: Actions.UPDATE_AVAILABLE_TO_SPENT, payload: Number(v) })} />
         </div>
       </div>
 
       <div className="flex gap-4 w-full">
         <ul className="flex flex-col gap-2 max-w-xl flex-shrink-0 basis-[576px]">
-          {spending.map((spend, index) => {
+          {spending.map((spend) => {
             const percentage = Number((spend.amount * 100 / totalAmount).toFixed(1))
 
             return (
               <li key={spend.id} >
-                <form className="flex items-center gap-2" onSubmit={onEditSubmit(index)}>
+                <form className="flex items-center gap-2" onSubmit={onEditSubmit(spend.id!)}>
                   <div className="flex items-center gap-2">
                     <PaletteInput options={COLOR_OPTIONS} defaultValue={spend.color} />
                     <Input defaultValue={spend.label} className="w-full" />
@@ -208,7 +289,7 @@ export function App() {
 
 
                   <Button type="submit">Edit</Button>
-                  <Button variant="destructive" onClick={deleteSpent(index)}>Delete</Button>
+                  <Button variant="destructive" onClick={deleteSpent(spend.id!)}>Delete</Button>
                 </form>
               </li>
             )
