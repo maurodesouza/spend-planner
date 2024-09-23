@@ -265,9 +265,6 @@ export function App() {
 
           <Button type="submit">Add</Button>
         </form>
-        <div>
-          <CurrencyInput onChange={(v) => dispatch({ type: Actions.UPDATE_AVAILABLE_TO_SPENT, payload: Number(v) })} />
-        </div>
       </div>
 
       <div className="flex gap-4 w-full">
@@ -306,7 +303,7 @@ export function App() {
 
             <p className="flex items-center gap-4">
               <strong className="text-nowrap">Available To Spent: </strong>
-              <Input readOnly value={formatToCurrency(availableToSpent)} />
+              <CurrencyInput onChange={(v) => dispatch({ type: Actions.UPDATE_AVAILABLE_TO_SPENT, payload: Number(v) })} />
             </p>
 
             {isAvailableDefined && (
