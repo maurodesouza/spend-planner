@@ -1,3 +1,5 @@
+import { Trash2 } from "lucide-react";
+
 import { FormEvent, useReducer } from "react";
 import { Pie, PieChart } from "recharts";
 
@@ -275,7 +277,7 @@ export function App() {
 
 
                   <Button type="submit">Edit</Button>
-                  <Button variant="destructive" onClick={deleteSpent(spend.id!)}>Delete</Button>
+                  <Button variant="destructive" className="px-3" onClick={deleteSpent(spend.id!)}><Trash2 /></Button>
                 </form>
               </li>
             )
