@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 import { FormEvent, useReducer } from "react";
 import { Pie, PieChart } from "recharts";
@@ -290,7 +290,9 @@ export function App() {
           <Input  className="w-full" />
           <CurrencyInput className="max-w-32" />
 
-          <Button type="submit">Add</Button>
+          <Button className="px-3" type="submit">
+            <Plus />
+          </Button>
         </form>
       </div>
 
