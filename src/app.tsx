@@ -256,8 +256,8 @@ export function App() {
 
   return (
     <div className="h-full p-4 flex gap-4">
-      <div className="flex flex-col h-full justify-between border border-border rounded p-4 bg-card max-w-xl flex-shrink-0 basis-[576px]">
-        <ul className="flex flex-col gap-2">
+      <div className="flex flex-col h-full justify-between border border-border rounded bg-card max-w-xl flex-shrink-0 basis-[576px]">
+        <ul className="flex flex-col gap-2 p-4">
           {spending.map((spend) => {
             const percentage = Number((spend.amount * 100 / totalAmount).toFixed(1))
 
@@ -282,7 +282,7 @@ export function App() {
           })}
         </ul>
 
-        <form key={tick} className="flex items-center gap-2 w-full" onSubmit={onCreateSubmit}>
+        <form key={tick} className="flex items-center gap-2 w-full border-t border-border  p-4" onSubmit={onCreateSubmit}>
           <PaletteInput options={COLOR_OPTIONS} defaultValue={getDefaultPalette()} />
           
           <Input  className="w-full" />
