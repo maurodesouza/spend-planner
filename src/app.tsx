@@ -56,10 +56,13 @@ enum Actions {
   ADD_SPENDING = "add-spending",
   REMOVE_SPENDING = "remove-spending",
   UPDATE_SPENDING = "update-spending",
+
+  UPDATE_TITLE = "update-title",
   UPDATE_AVAILABLE_TO_SPENT = "update-available-to-spent",
 } 
 
 type Data = {
+  title?: string
   availableToSpent: number
   spending: Spent[]
 }
@@ -70,6 +73,7 @@ type Action = {
 }
 
 const INITIAL_STATE = {
+  title: undefined,
   availableToSpent: 0,
   spending: []
 } satisfies Data
@@ -111,6 +115,13 @@ export function App() {
     
             return record
           })
+        }
+      }
+
+      case Actions.UPDATE_TITLE: {
+        return {
+          ...state,
+          title: action.payload
         }
       }
 
@@ -259,6 +270,8 @@ export function App() {
   return (
     <div className="h-full w-full flex flex-col">
       <header className="h-16 bg-primary w-full px-4 flex justify-between items-center">
+        <Input placeholder="Planner Title" className="max-w-96" value={data.title} onChange={(v) => dispatch({ type: Actions.UPDATE_TITLE, payload: v.target.value })} />
+
       </header>
 
       <div className="h-full p-4 flex gap-4 w-full">
