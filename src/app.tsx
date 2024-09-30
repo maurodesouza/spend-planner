@@ -9,6 +9,7 @@ import { Chart, ChartConfig } from "./components/ui/chart";
 import { PaletteInput } from "./components/ui/palette-input";
 import { CurrencyInput } from "./components/ui/currency-input";
 import { useStorageReducer } from "./hooks/use-storage-reducer";
+import { DraftPlanner, Planner, Spent } from "./types";
 
 const COLOR_OPTIONS = [
   "#ffdab9",
@@ -43,14 +44,6 @@ const COLOR_OPTIONS = [
   "#ffb347"
 ]
 
-type Spent = {
-  id?: string
-  color: string
-  label: string
-  amount: number
-  fill?: string
-}
-
 enum Actions {
   SET_SPENDING = "set-spending",
   ADD_SPENDING = "add-spending",
@@ -61,12 +54,6 @@ enum Actions {
   UPDATE_AVAILABLE_TO_SPENT = "update-available-to-spent",
 } 
 
-type Data = {
-  title?: string
-  availableToSpent: number
-  spending: Spent[]
-}
-
 type Action = {
   type: Actions,
   payload: any
@@ -76,10 +63,10 @@ const INITIAL_STATE = {
   title: undefined,
   availableToSpent: 0,
   spending: []
-} satisfies Data
+} satisfies DraftPlanner
 
 export function App() {
-  const [data, dispatch] = useStorageReducer<Data, Action>((state, action) => {
+  const [data, dispatch] = useStorageReducer<Planner | DraftPlanner, Action>((state, action) => {
     switch (action.type) {
       case Actions.SET_SPENDING: {
         return {
