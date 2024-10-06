@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Save, Trash2 } from "lucide-react";
 
 import { FormEvent, useReducer } from "react";
 import { Pie, PieChart } from "recharts";
@@ -10,6 +10,7 @@ import { PaletteInput } from "./components/ui/palette-input";
 import { CurrencyInput } from "./components/ui/currency-input";
 import { useStorageReducer } from "./hooks/use-storage-reducer";
 import { DraftPlanner, Planner, Spent } from "./types";
+import { usePlanners } from "./hooks/use-planners";
 
 const COLOR_OPTIONS = [
   "#ffdab9",
@@ -45,6 +46,8 @@ const COLOR_OPTIONS = [
 ]
 
 enum Actions {
+  SET_FULL_STATE = "set-state",
+
   SET_SPENDING = "set-spending",
   ADD_SPENDING = "add-spending",
   REMOVE_SPENDING = "remove-spending",
@@ -68,6 +71,10 @@ const INITIAL_STATE = {
 export function App() {
   const [data, dispatch] = useStorageReducer<Planner | DraftPlanner, Action>((state, action) => {
     switch (action.type) {
+      case Actions.SET_FULL_STATE: {
+        return action.payload
+      }
+
       case Actions.SET_SPENDING: {
         return {
           ...state,
@@ -126,6 +133,8 @@ export function App() {
   }, INITIAL_STATE, {
     storageKey: "data"
   })
+
+  const { addPlanner, updatePlanner } = usePlanners()
 
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
@@ -228,6 +237,28 @@ export function App() {
     return COLOR_OPTIONS[index]
   }
 
+  function savePlanner() {
+    if ("id" in data) return updatePlanner(data.id, data)
+
+      const curDate = new Date()
+
+      const year = curDate.getFullYear()
+      const month = String(curDate.getMonth() + 1).padStart(2, "0")
+      const day = String(curDate.getDay()).padStart(2, "0")
+
+      const formattedDate = `${year}-${month}-${day}`
+
+      const planner = addPlanner({
+        ...data,
+        title: data.title || `planner-${formattedDate}`
+      })
+
+      dispatch({
+        type: Actions.SET_FULL_STATE,
+        payload: planner
+      })
+  }
+
   const isAvailableDefined = availableToSpent > 0
   const isMissing = isAvailableDefined && rest < 0
 
@@ -259,6 +290,9 @@ export function App() {
       <header className="h-16 bg-primary w-full px-4 flex justify-between items-center">
         <Input placeholder="Planner Title" className="max-w-96" value={data.title} onChange={(v) => dispatch({ type: Actions.UPDATE_TITLE, payload: v.target.value })} />
 
+        <Button onClick={savePlanner} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
+          <Save /> {"id" in data ? "Update" : "Save"}
+        </Button>
       </header>
 
       <div className="h-full p-4 flex gap-4 w-full">
