@@ -1,16 +1,19 @@
-import { Copy, Plus, Save, Trash2 } from "lucide-react";
-
 import { FormEvent, useReducer } from "react";
+
 import { Pie, PieChart } from "recharts";
+import { Copy, Plus, Replace, Save, Trash2 } from "lucide-react";
 
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { Chart, ChartConfig } from "./components/ui/chart";
+import { DropdownMenu } from "./components/ui/dropdown-menu";
 import { PaletteInput } from "./components/ui/palette-input";
 import { CurrencyInput } from "./components/ui/currency-input";
-import { useStorageReducer } from "./hooks/use-storage-reducer";
-import { DraftPlanner, Planner, Spent } from "./types";
+
 import { usePlanners } from "./hooks/use-planners";
+import { useStorageReducer } from "./hooks/use-storage-reducer";
+
+import { DraftPlanner, Planner, Spent } from "./types";
 
 const COLOR_OPTIONS = [
   "#ffdab9",
@@ -139,7 +142,7 @@ export function App() {
     storageKey: "data"
   })
 
-  const { addPlanner, updatePlanner } = usePlanners()
+  const { planners, addPlanner, updatePlanner } = usePlanners()
 
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
@@ -304,7 +307,31 @@ export function App() {
       <header className="h-16 bg-primary w-full px-4 flex justify-between items-center">
         <Input key={"id" in data ? data.id : "default-key"} placeholder="Planner Title" className="max-w-96" value={data.title} onChange={(v) => dispatch({ type: Actions.UPDATE_TITLE, payload: v.target.value })} />
 
-        <div>
+
+
+        <div className="flex items-center gap-1">
+
+        <DropdownMenu.Provider>
+  <DropdownMenu.Trigger asChild disabled={!planners.length}>
+    
+  <Button onClick={clearBoard} disabled={!planners.length} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
+              <Replace /> Load Planner
+            </Button>
+
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Content>
+    <DropdownMenu.Label>Planners</DropdownMenu.Label>
+    <DropdownMenu.Separator />
+
+    {planners.map(planner => {
+      return (
+        <DropdownMenu.Item key={planner.id} onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })}>{planner.title}</DropdownMenu.Item>
+      )
+    })}
+  </DropdownMenu.Content>
+</DropdownMenu.Provider>
+
+
         {"id" in data && (
             <Button onClick={clearBoard} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
               <Plus /> New Planner
