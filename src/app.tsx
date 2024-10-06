@@ -46,6 +46,7 @@ const COLOR_OPTIONS = [
 ]
 
 enum Actions {
+  RESET_STATE = "reset-state",
   SET_FULL_STATE = "set-state",
 
   SET_SPENDING = "set-spending",
@@ -59,7 +60,7 @@ enum Actions {
 
 type Action = {
   type: Actions,
-  payload: any
+  payload?: any
 }
 
 const INITIAL_STATE = {
@@ -71,6 +72,10 @@ const INITIAL_STATE = {
 export function App() {
   const [data, dispatch] = useStorageReducer<Planner | DraftPlanner, Action>((state, action) => {
     switch (action.type) {
+      case Actions.RESET_STATE: {
+        return INITIAL_STATE
+      }
+
       case Actions.SET_FULL_STATE: {
         return action.payload
       }
@@ -257,9 +262,15 @@ export function App() {
     })
   }
 
+
+  
   function savePlanner() {
     if ("id" in data) updatePlanner(data.id, data)
     else createPlanner()
+  }
+
+  function clearBoard() {
+    dispatch({ type: Actions.RESET_STATE })
   }
 
   const isAvailableDefined = availableToSpent > 0
@@ -291,9 +302,15 @@ export function App() {
   return (
     <div className="h-full w-full flex flex-col">
       <header className="h-16 bg-primary w-full px-4 flex justify-between items-center">
-        <Input placeholder="Planner Title" className="max-w-96" value={data.title} onChange={(v) => dispatch({ type: Actions.UPDATE_TITLE, payload: v.target.value })} />
+        <Input key={"id" in data ? data.id : "default-key"} placeholder="Planner Title" className="max-w-96" value={data.title} onChange={(v) => dispatch({ type: Actions.UPDATE_TITLE, payload: v.target.value })} />
 
         <div>
+        {"id" in data && (
+            <Button onClick={clearBoard} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
+              <Plus /> New Planner
+            </Button>
+          )}
+
           <Button onClick={savePlanner} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
             <Save /> {"id" in data ? "Update" : "Save"}
           </Button>
