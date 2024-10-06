@@ -1,4 +1,4 @@
-import { Plus, Save, Trash2 } from "lucide-react";
+import { Copy, Plus, Save, Trash2 } from "lucide-react";
 
 import { FormEvent, useReducer } from "react";
 import { Pie, PieChart } from "recharts";
@@ -293,9 +293,17 @@ export function App() {
       <header className="h-16 bg-primary w-full px-4 flex justify-between items-center">
         <Input placeholder="Planner Title" className="max-w-96" value={data.title} onChange={(v) => dispatch({ type: Actions.UPDATE_TITLE, payload: v.target.value })} />
 
-        <Button onClick={savePlanner} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
-          <Save /> {"id" in data ? "Update" : "Save"}
-        </Button>
+        <div>
+          <Button onClick={savePlanner} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
+            <Save /> {"id" in data ? "Update" : "Save"}
+          </Button>
+
+          {"id" in data && (
+            <Button onClick={createPlanner} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
+              <Copy /> Duplicate
+            </Button>
+          )}
+        </div>
       </header>
 
       <div className="h-full p-4 flex gap-4 w-full">
