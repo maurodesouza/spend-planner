@@ -237,26 +237,29 @@ export function App() {
     return COLOR_OPTIONS[index]
   }
 
+  function createPlanner() {
+    const curDate = new Date()
+
+    const year = curDate.getFullYear()
+    const month = String(curDate.getMonth() + 1).padStart(2, "0")
+    const day = String(curDate.getDay()).padStart(2, "0")
+
+    const formattedDate = `${year}-${month}-${day}`
+
+    const planner = addPlanner({
+      ...data,
+      title: data.title || `planner-${formattedDate}`
+    })
+
+    dispatch({
+      type: Actions.SET_FULL_STATE,
+      payload: planner
+    })
+  }
+
   function savePlanner() {
-    if ("id" in data) return updatePlanner(data.id, data)
-
-      const curDate = new Date()
-
-      const year = curDate.getFullYear()
-      const month = String(curDate.getMonth() + 1).padStart(2, "0")
-      const day = String(curDate.getDay()).padStart(2, "0")
-
-      const formattedDate = `${year}-${month}-${day}`
-
-      const planner = addPlanner({
-        ...data,
-        title: data.title || `planner-${formattedDate}`
-      })
-
-      dispatch({
-        type: Actions.SET_FULL_STATE,
-        payload: planner
-      })
+    if ("id" in data) updatePlanner(data.id, data)
+    else createPlanner()
   }
 
   const isAvailableDefined = availableToSpent > 0
