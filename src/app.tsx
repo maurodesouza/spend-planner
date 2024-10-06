@@ -142,7 +142,7 @@ export function App() {
     storageKey: "data"
   })
 
-  const { planners, addPlanner, updatePlanner } = usePlanners()
+  const { planners, addPlanner, updatePlanner, removePlanner } = usePlanners()
 
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
@@ -276,6 +276,21 @@ export function App() {
     dispatch({ type: Actions.RESET_STATE })
   }
 
+  function deletePlanner(plannerId: string) {
+    if ("id" in data && plannerId === data.id) {
+      const payload = structuredClone(data)
+
+      Reflect.deleteProperty(payload, "id")
+
+      dispatch({
+        type: Actions.SET_FULL_STATE,
+        payload
+      })
+    }
+
+    removePlanner(plannerId)
+  }
+
   const isAvailableDefined = availableToSpent > 0
   const isMissing = isAvailableDefined && rest < 0
 
@@ -338,6 +353,11 @@ export function App() {
               <DropdownMenu.Item className="gap-2" onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })}>
                 <Check  size={20} />
                 <span>Show</span>
+              </DropdownMenu.Item>
+
+              <DropdownMenu.Item className="gap-2 text-destructive" onClick={() => deletePlanner(planner.id)}>
+                <Trash2  size={20} />
+                <span>Delete</span>
               </DropdownMenu.Item>
             </DropdownMenu.SubContent>
           </DropdownMenu.Portal>

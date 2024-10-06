@@ -22,10 +22,14 @@ export function usePlanners() {
 
     }
 
+    function removePlanner(id: string) {
+        setPlanners(state => state.filter(planner => planner.id !== id))
+    }
 
     return {
         addPlanner,
         updatePlanner,
+        removePlanner,
 
         planners,
     }
