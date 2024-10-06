@@ -9,9 +9,11 @@ import { Chart, ChartConfig } from "./components/ui/chart";
 import { DropdownMenu } from "./components/ui/dropdown-menu";
 import { PaletteInput } from "./components/ui/palette-input";
 import { CurrencyInput } from "./components/ui/currency-input";
-import { useStorageReducer } from "./hooks/use-storage-reducer";
-import { DraftPlanner, Planner, Spent } from "./types";
+
 import { usePlanners } from "./hooks/use-planners";
+import { useStorageReducer } from "./hooks/use-storage-reducer";
+
+import { DraftPlanner, Planner, Spent } from "./types";
 
 const COLOR_OPTIONS = [
   "#ffdab9",
