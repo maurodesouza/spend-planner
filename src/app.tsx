@@ -1,7 +1,7 @@
 import { FormEvent, useReducer } from "react";
 
 import { Pie, PieChart } from "recharts";
-import { Copy, Plus, Replace, Save, Trash2 } from "lucide-react";
+import { Check, Copy, Notebook, Plus, Replace, Save, Trash2 } from "lucide-react";
 
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
@@ -142,7 +142,7 @@ export function App() {
     storageKey: "data"
   })
 
-  const { planners, addPlanner, updatePlanner } = usePlanners()
+  const { planners, addPlanner, updatePlanner, removePlanner } = usePlanners()
 
   const [tick, increaseTick] = useReducer(state => state + 1, 0)
 
@@ -276,6 +276,21 @@ export function App() {
     dispatch({ type: Actions.RESET_STATE })
   }
 
+  function deletePlanner(plannerId: string) {
+    if ("id" in data && plannerId === data.id) {
+      const payload = structuredClone(data)
+
+      Reflect.deleteProperty(payload, "id")
+
+      dispatch({
+        type: Actions.SET_FULL_STATE,
+        payload
+      })
+    }
+
+    removePlanner(plannerId)
+  }
+
   const isAvailableDefined = availableToSpent > 0
   const isMissing = isAvailableDefined && rest < 0
 
@@ -323,11 +338,33 @@ export function App() {
     <DropdownMenu.Label>Planners</DropdownMenu.Label>
     <DropdownMenu.Separator />
 
-    {planners.map(planner => {
-      return (
-        <DropdownMenu.Item key={planner.id} onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })}>{planner.title}</DropdownMenu.Item>
-      )
-    })}
+
+    <DropdownMenu.Group>
+      {planners.map(planner => {
+        return (
+          <DropdownMenu.Sub key={planner.id}>
+          <DropdownMenu.SubTrigger onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })} className="gap-2">
+            <Notebook size={20} />
+            <span>{planner.title}</span>
+          </DropdownMenu.SubTrigger>
+
+          <DropdownMenu.Portal>
+            <DropdownMenu.SubContent>
+              <DropdownMenu.Item className="gap-2" onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })}>
+                <Check  size={20} />
+                <span>Show</span>
+              </DropdownMenu.Item>
+
+              <DropdownMenu.Item className="gap-2 text-destructive" onClick={() => deletePlanner(planner.id)}>
+                <Trash2  size={20} />
+                <span>Delete</span>
+              </DropdownMenu.Item>
+            </DropdownMenu.SubContent>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Sub>
+        )
+      })}
+    </DropdownMenu.Group>
   </DropdownMenu.Content>
 </DropdownMenu.Provider>
 
