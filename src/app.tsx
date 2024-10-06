@@ -1,7 +1,7 @@
 import { FormEvent, useReducer } from "react";
 
 import { Pie, PieChart } from "recharts";
-import { Copy, Plus, Replace, Save, Trash2 } from "lucide-react";
+import { Check, Copy, Notebook, Plus, Replace, Save, Trash2 } from "lucide-react";
 
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
@@ -323,11 +323,28 @@ export function App() {
     <DropdownMenu.Label>Planners</DropdownMenu.Label>
     <DropdownMenu.Separator />
 
-    {planners.map(planner => {
-      return (
-        <DropdownMenu.Item key={planner.id} onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })}>{planner.title}</DropdownMenu.Item>
-      )
-    })}
+
+    <DropdownMenu.Group>
+      {planners.map(planner => {
+        return (
+          <DropdownMenu.Sub key={planner.id}>
+          <DropdownMenu.SubTrigger onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })} className="gap-2">
+            <Notebook size={20} />
+            <span>{planner.title}</span>
+          </DropdownMenu.SubTrigger>
+
+          <DropdownMenu.Portal>
+            <DropdownMenu.SubContent>
+              <DropdownMenu.Item className="gap-2" onClick={() => dispatch({ type: Actions.SET_FULL_STATE, payload: planner })}>
+                <Check  size={20} />
+                <span>Show</span>
+              </DropdownMenu.Item>
+            </DropdownMenu.SubContent>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Sub>
+        )
+      })}
+    </DropdownMenu.Group>
   </DropdownMenu.Content>
 </DropdownMenu.Provider>
 
