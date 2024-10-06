@@ -309,7 +309,7 @@ export function App() {
 
 
 
-        <div>
+        <div className="flex items-center gap-1">
 
         <DropdownMenu.Provider>
   <DropdownMenu.Trigger disabled={!planners.length}>
