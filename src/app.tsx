@@ -312,7 +312,8 @@ export function App() {
         <div className="flex items-center gap-1">
 
         <DropdownMenu.Provider>
-  <DropdownMenu.Trigger disabled={!planners.length}>
+  <DropdownMenu.Trigger asChild disabled={!planners.length}>
+    
   <Button onClick={clearBoard} disabled={!planners.length} className="gap-2 bg-primary text-white hover:bg-white hover:text-primary rounded">
               <Replace /> Load Planner
             </Button>
