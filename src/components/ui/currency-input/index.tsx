@@ -1,25 +1,28 @@
-import * as React from "react"
+import * as React from 'react';
 
-import { Input } from "../input"
+import { Input } from '../input';
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
-    onChange?: (value: string) => void
-  }
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+  onChange?: (value: string) => void;
+}
 
-function CurrencyInput({ type, onChange, defaultValue = "0", ...props }: InputProps) {
+function CurrencyInput({
+  type,
+  onChange,
+  defaultValue = '0',
+  ...props
+}: InputProps) {
   const [value, setValue] = React.useState(() => {
-    const valueStr = String(defaultValue)
+    const valueStr = String(defaultValue);
 
-    return valueStr.match(/\.|,/) ? valueStr : `${valueStr}.00`
-  })
+    return valueStr.match(/\.|,/) ? valueStr : `${valueStr}.00`;
+  });
 
   function formatInput(value: string) {
-
     value = value.replace(/\D/g, '');
 
-    if (value.length == 1) 
-      value = ('0' + value);
+    if (value.length == 1) value = '0' + value;
 
     value = value.replace(/(\d{2}$)/, '.$1');
 
@@ -34,10 +37,10 @@ function CurrencyInput({ type, onChange, defaultValue = "0", ...props }: InputPr
   }
 
   function onValueChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = formatOutput(e.target.value)
+    const value = formatOutput(e.target.value);
 
-    setValue(value)
-    onChange?.(value)
+    setValue(value);
+    onChange?.(value);
   }
 
   return (
@@ -47,8 +50,7 @@ function CurrencyInput({ type, onChange, defaultValue = "0", ...props }: InputPr
       onChange={onValueChange}
       {...props}
     />
-  )
+  );
 }
 
-
-export { CurrencyInput }
+export { CurrencyInput };
