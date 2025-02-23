@@ -523,6 +523,7 @@ export function App() {
             <p className="flex items-center gap-4">
               <strong className="text-nowrap">Available To Spent: </strong>
               <CurrencyInput
+                defaultValue={availableToSpent}
                 onChange={v =>
                   dispatch({
                     type: Actions.UPDATE_AVAILABLE_TO_SPENT,
