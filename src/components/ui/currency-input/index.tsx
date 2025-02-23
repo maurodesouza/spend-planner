@@ -14,9 +14,7 @@ function CurrencyInput({
   ...props
 }: InputProps) {
   const [value, setValue] = React.useState(() => {
-    const valueStr = String(defaultValue);
-
-    return valueStr.match(/\.|,/) ? valueStr : `${valueStr}.00`;
+    return parseFloat(defaultValue as string).toFixed(2);
   });
 
   function formatInput(value: string) {
