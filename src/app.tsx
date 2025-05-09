@@ -4,6 +4,8 @@ import { Pie, PieChart } from 'recharts';
 import {
   Check,
   Copy,
+  Eye,
+  EyeOff,
   Notebook,
   Plus,
   Replace,
@@ -162,10 +164,11 @@ export function App() {
 
   const { availableToSpent, spending } = data;
 
-  const totalSpending = spending.reduce(
-    (amount, spent) => amount + spent.amount,
-    0
-  );
+  const totalSpending = spending.reduce((amount, spent) => {
+    if (spent.disabled) return amount;
+
+    return amount + spent.amount;
+  }, 0);
   const rest = availableToSpent - totalSpending;
 
   const totalAmount =
@@ -184,7 +187,7 @@ export function App() {
 
     const amount = Number(amountString.replace(/(\d{2}$)/, '.$1'));
 
-    return { color, label, amount };
+    return { color, label, amount, disabled: false };
   }
 
   function onCreateSubmit(e: FormEvent<HTMLFormElement>) {
@@ -238,9 +241,11 @@ export function App() {
   }
 
   function getChartData() {
-    if (!isAvailableDefined || isMissing) return spending;
+    const ableSpending = spending.filter(spent => !spent.disabled);
 
-    const data = [...spending];
+    if (!isAvailableDefined || isMissing) return ableSpending;
+
+    const data = [...ableSpending];
 
     data.push({
       amount: rest,
@@ -248,6 +253,7 @@ export function App() {
       label: 'Leftover',
       id: 'leftover',
       fill: `var(--color-leftover)`,
+      disabled: false,
     });
 
     return data;
@@ -316,6 +322,8 @@ export function App() {
 
   const chartConfig = spending.reduce(
     (obj, spent) => {
+      if (spent.disabled) return obj;
+
       obj[spent.id!] = {
         label: spent.label,
         color: spent.color,
@@ -443,9 +451,9 @@ export function App() {
         <div className="flex flex-col h-full justify-between border border-border rounded bg-card max-w-xl flex-shrink-0 basis-[576px] overflow-hidden">
           <ul className="flex flex-col gap-2 p-4 overflow-auto">
             {spending.map(spend => {
-              const percentage = Number(
-                ((spend.amount * 100) / totalAmount).toFixed(1)
-              );
+              const percentage = spend.disabled
+                ? 0
+                : Number(((spend.amount * 100) / totalAmount).toFixed(1));
 
               return (
                 <li key={spend.id}>
@@ -475,13 +483,36 @@ export function App() {
                       %
                     </div>
 
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        dispatch({
+                          type: Actions.UPDATE_SPENDING,
+                          payload: {
+                            id: spend.id,
+                            data: {
+                              disabled: !spend.disabled,
+                            },
+                          },
+                        });
+                      }}
+                    >
+                      {spend.disabled ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </Button>
+
                     <Button type="submit">Edit</Button>
+
                     <Button
                       variant="destructive"
                       className="px-3"
                       onClick={deleteSpent(spend.id!)}
                     >
-                      <Trash2 />
+                      <Trash2 size={16} />
                     </Button>
                   </form>
                 </li>

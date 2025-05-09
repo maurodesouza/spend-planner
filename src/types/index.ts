@@ -3,6 +3,7 @@ export type Spent = {
   color: string;
   label: string;
   amount: number;
+  disabled: boolean;
   fill?: string;
 };
 
